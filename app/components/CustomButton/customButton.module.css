@@ -13,3 +13,7 @@
     border: none;
     border-radius: 5px;
 }
+
+.customButton:hover {
+    background-color: #005bb5;
+}

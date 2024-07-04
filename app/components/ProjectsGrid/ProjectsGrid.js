@@ -1,8 +1,16 @@
 import React from 'react';
 import styles from './ProjectsGrid.module.css';
 import CustomButton from '../CustomButton/CustomButton';
+import { useRouter } from 'next/navigation';
 
 const ProjectsGrid = ({ projects = null, onCreate }) => {
+
+    const routerProject = useRouter();
+
+    const handleOpenProject = (id) => {
+        routerProject.push(`/projects/${id}`)
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -13,6 +21,7 @@ const ProjectsGrid = ({ projects = null, onCreate }) => {
                     <div key={project.id} className={styles.card}>
                         <h2>{project.name}</h2>
                         <p>{project.description}</p>
+                        <CustomButton text="Open Project" onClick={() => handleOpenProject(project.id)} />
                     </div>
                 ))}
             </div>
