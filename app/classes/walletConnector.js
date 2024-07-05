@@ -1,4 +1,4 @@
-class WalletConnector {
+export default class WalletConnector {
     static connect() {
         if (isPhantomInstalled()){
             establishConnection();
@@ -7,6 +7,10 @@ class WalletConnector {
             console.warn('Phantom extension not installed. Please install it to continue.')
             goToPhantomInstall();
         }
+    }
+
+    static async establishConnection() {
+        return await establishConnection();
     }
 
     static disconnect() {
@@ -48,10 +52,14 @@ const establishConnection =async () => {
     try {
         const resp = await provider.connect();
         console.log(resp.publicKey.toString());
+
+        return resp;
         // 26qv4GCcx98RihuK3c4T6ozB3J7L6VwCuFVc7Ta2A3Uo 
     } catch (err) {
         // { code: 4001, message: 'User rejected the request.' }
     }
 }
 
-module.exports = WalletConnector;
+
+
+//module.exports = WalletConnector;

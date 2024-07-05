@@ -8,7 +8,7 @@ const ProjectsGrid = ({ projects = null, onCreate }) => {
     const routerProject = useRouter();
 
     const handleOpenProject = (id) => {
-        routerProject.push(`/projects/${id}`)
+        routerProject.push(`pages/projects/${id}`)
     }
 
     return (
