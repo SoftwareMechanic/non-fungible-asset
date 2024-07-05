@@ -7,8 +7,9 @@ import Navbar from './components/Navbar/Navbar';
 import ProjectsGrid from './components/ProjectsGrid/ProjectsGrid';
 import React, { useState } from 'react';
 
-export default function Home() {
 
+
+export default function Home() {
   const router = useRouter();
 
   const handleCreateProjectClick = () => {

@@ -9,14 +9,13 @@
 }
 
 .navbar {
-    min-width: 50%;
-    max-width: 50%;
+    min-width: 100%;
     min-height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     
-    padding: 10px;
+    padding: 4px;
 }
 
 .navbar ul {
