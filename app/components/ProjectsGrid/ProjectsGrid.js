@@ -11,12 +11,16 @@ const ProjectsGrid = ({ projects = null, onCreate }) => {
         routerProject.push(`/projects/${id}`)
     }
 
+    const handleCreateProjectClick = () => {
+        routerProject.push('/createProject');
+      };
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Projects</h1>
             </div>
-            <div className={styles.grid}>
+            <div className={styles.grid2}>
                 {projects != null && projects.map((project) => (
                     <div key={project.id} className={styles.card}>
                         <h2>{project.name}</h2>
@@ -25,7 +29,7 @@ const ProjectsGrid = ({ projects = null, onCreate }) => {
                     </div>
                 ))}
             </div>
-            <CustomButton text="Create New Project" onClick={onCreate} />
+            <CustomButton text="Create New Project" onClick={handleCreateProjectClick} />
         </div>
     );
 };

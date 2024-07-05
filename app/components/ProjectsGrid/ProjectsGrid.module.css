@@ -10,6 +10,7 @@
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
+    margin-left: 1rem;
 }
 
 .grid {
@@ -18,12 +19,21 @@
     gap: 20px;
     width: 100%;
 }
+.grid2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 800px;
+    margin-top: 3rem;
+  }
 
 .card {
     padding: 20px;
     background-color: #f0f0f0;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
 }
 
 .card h2 {
