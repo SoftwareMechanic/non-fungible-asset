@@ -1,5 +1,6 @@
 "use client"
 import React, { useCallback } from 'react';
+import styles from "../../page.module.css"
 import Navbar from '../../components/Navbar/Navbar';
 import CreateProjectForm from '../../components/CreateProjectForm/CreateProjectForm';
 import NonFungibleAssetMinter from '@/app/classes/nonFungibleAssetMinter';

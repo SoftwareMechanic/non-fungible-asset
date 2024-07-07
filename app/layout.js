@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ProjectsProvider } from '../context/ProjectsContext';
-import "bootstrap/dist/css/bootstrap.min.css";
+//import "bootstrap/dist/css/bootstrap.min.css";
 import BlockchainWallet from "./components/BlockchainWallet/BlockchainWallet";
 
 const inter = Inter({ subsets: ["latin"] });
