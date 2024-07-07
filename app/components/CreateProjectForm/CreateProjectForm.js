@@ -12,6 +12,7 @@ const CreateProjectForm = ({ onCreate }) => {
             name,
             description,
         };
+        console.log("Creating project")
         onCreate(newProject);
     };
 

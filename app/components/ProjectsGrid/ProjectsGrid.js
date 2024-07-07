@@ -12,7 +12,7 @@ const ProjectsGrid = ({ projects = null, onCreate }) => {
     }
 
     const handleCreateProjectClick = () => {
-        routerProject.push('/createProject');
+        routerProject.push('/pages/createProject');
       };
 
     return (

@@ -61,7 +61,7 @@ async function generateCandyMachine() {
             type: "hidden",
             name: "new project",
             uri: "https://api.jsonbin.io/v3/qs/66868fbdad19ca34f882bac4",
-            hash: Array.from(new Uint8Array(crypto.createHash('sha256').update("").digest())) //[0]
+            hash: Array.from(new Uint8Array(crypto.createHash('sha256').update("").digest())) //empty hash
         }
     };
     const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);
