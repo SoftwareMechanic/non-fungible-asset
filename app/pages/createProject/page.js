@@ -42,7 +42,7 @@ const CreateProject = () => {
     }
     
     return (
-        <main>
+        <main className={styles.main}>
             <Navbar />
             {/* <CreateProjectForm onCreate={(newProject) => setProjects([...projects, newProject])} /> */}
             <CreateProjectForm onCreate={(newProject) => mintProjectNft( newProject)} />

@@ -13,18 +13,12 @@
     font-size: 15;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    width: 100%;
-}
 .grid2 {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    max-width: 800px;
+    max-width: 600px;
     margin-top: 1rem;
   }
 
@@ -34,9 +28,15 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 1rem;
-    width: 300px;
+    width: 400px;
 }
 
 .card h2 {
     margin-top: 0;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
 }

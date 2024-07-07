@@ -1,15 +1,23 @@
+"use client";
+
 import React from 'react';
 import styles from './ProjectsGrid.module.css';
 import CustomButton from '../CustomButton/CustomButton';
 import { useRouter } from 'next/navigation';
+import { useProjects } from '../../../context/ProjectsContext';
 
-const ProjectsGrid = ({ projects = null, onCreate }) => {
+const ProjectsGrid = () => {
 
     const routerProject = useRouter();
+
+    const { projects } = useProjects();
 
     const handleOpenProject = (id) => {
         routerProject.push(`pages/projects/${id}`)
     }
+
+    console.log("ProjectsGrid");
+    console.log(projects);
 
     const handleCreateProjectClick = () => {
         routerProject.push('/pages/createProject');

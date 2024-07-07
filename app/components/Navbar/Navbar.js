@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../Navbar/style.module.css'
 import WalletConnector from '@/app/classes/walletConnector';
+import Link from 'next/link';
 
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
@@ -9,7 +10,7 @@ const Navbar = () => {
         <div className={styles.navbar_container}>
             <nav className={styles.navbar}>
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><Link href="/">Home</Link></li>
                     <li><a href="/about">About</a></li>
                     <li><a href="/contact">Contact</a></li>
                 </ul>
