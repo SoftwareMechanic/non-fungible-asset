@@ -2,25 +2,23 @@ import React, { useState } from 'react';
 import styles from './CreateProjectForm.module.css';
 import { useProjects } from '../../../context/ProjectsContext';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 const CreateProjectForm = ({ onCreate }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const { addProject } = useProjects();
+    const { projects ,addProject } = useProjects();
     const router = useRouter();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const newProject = {
-            id: Date.now(),
+            id: (projects.length + 1).toString(),
             name,
             description,
         };
         //onCreate(newProject);
         addProject(newProject);
     };
-
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
