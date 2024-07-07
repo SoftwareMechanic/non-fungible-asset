@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import styles from './CreateProjectForm.module.css';
+import { useProjects } from '../../../context/ProjectsContext';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const CreateProjectForm = ({ onCreate }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const { addProject } = useProjects();
+    const router = useRouter();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -12,8 +17,10 @@ const CreateProjectForm = ({ onCreate }) => {
             name,
             description,
         };
-        onCreate(newProject);
+        //onCreate(newProject);
+        addProject(newProject);
     };
+
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -42,6 +49,7 @@ const CreateProjectForm = ({ onCreate }) => {
             </button>
         </form>
     );
+
 };
 
 export default CreateProjectForm;
