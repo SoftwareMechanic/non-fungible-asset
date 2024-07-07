@@ -1,9 +1,23 @@
 "use client"
 
-
 import React from 'react';
+import styles from '../../../page.module.css';
+import { useProjects } from '@/context/ProjectsContext';
+import { useRouter } from 'next/navigation';
 
 const ProjectPage = ({ params }) => {
+
+  const router = useRouter();
+
+  console.log(params);
+
+  const { id } = params;
+  const { projects } = useProjects();
+
+  console.log("ProjectPage");
+  console.log(projects);
+
+  const project = projects.find((project) => project.id === id);
   //const router = useRouter();
 
   // const navigateHome = () => {
@@ -12,9 +26,12 @@ const ProjectPage = ({ params }) => {
   // };
 
   return (
-    <main>
-      <h1>This is a dynamic page with id: {params.slug}</h1>
-      <button >Go Home</button>
+    <main className={styles.main}>
+      <div>
+      <h1>{project.name}</h1>
+      <p>Project ID: {project.id}</p>
+      <p>{project.description}</p>
+    </div>
     </main>
   );
 };
