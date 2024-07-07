@@ -12,6 +12,8 @@ const CreateProject = () => {
     const {metaplex} = useMetaplex()
     const wallet = useWallet()
 
+    
+
     const connnection = useConnection();
 
 
@@ -26,7 +28,9 @@ const CreateProject = () => {
         console.log(candyMachines)
         if (candyMachines.length == 0){
             // first time the wallet (user) create a project
-            // create his own candy machine
+            // create his own candy machine 
+
+        
 
             const collectionNft = await NonFungibleAssetMinter.generateCollectionNFT(metaplex, wallet)
             const candyMachine = await NonFungibleAssetMinter.generateCandyMachine(metaplex, wallet, collectionNft.address.toString())
@@ -41,6 +45,8 @@ const CreateProject = () => {
             NonFungibleAssetMinter.NonFungibleAssetMintProject(candyMachine.address, metaplex,wallet, newProject.name, newProject.description);
         }
     }
+
+    
     
     return (
         <main className={styles.main}>

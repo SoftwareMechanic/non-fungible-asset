@@ -8,7 +8,7 @@
 
 
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
-const { Metaplex, keypairIdentity, irysStorage, toMetaplexFile, toBigNumber, toDateTime, sol } = require("@metaplex-foundation/js");
+const { Metaplex, keypairIdentity, irysStorage, toMetaplexFile, toBigNumber, toDateTime, sol, findNftsByOwnerOperation } = require("@metaplex-foundation/js");
 const secret = require('./guideSecret.json');
 const BigNumber = require("bignumber.js");
 const crypto = require('crypto');
@@ -40,8 +40,6 @@ async function generateCandyMachine() {
     for (let i = 0; i < buffer.length; ++i) {
         hash[i] = buffer[i];
     }
-
-
 
     const candyMachineSettings = {
         
@@ -116,6 +114,9 @@ async function updateMintedNft(mintAddress, new_name, new_metadata) {
 
 async function FetchNft(mintAddress) {
     console.log(`Step 1 - Fetching existing NFT`);
+
+    
+    
     const nft = await METAPLEX.nfts().findByMint({ mintAddress: new PublicKey(mintAddress) });
     console.log(nft.json);
     if (!nft) {

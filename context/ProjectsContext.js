@@ -14,12 +14,17 @@ export const ProjectsProvider = ({ children, initialProjects }) => {
     });
   };
 
+
+  const clearProjects = () => {
+    setProjects([]);
+  };
+
   useEffect(() => {
     console.log("Projects after state update:", projects);
   }, [projects]); // This useEffect runs whenever 'projects' changes
   
   return (
-    <ProjectsContext.Provider value={{ projects, setProjects, addProject }}>
+    <ProjectsContext.Provider value={{ projects, setProjects, addProject, clearProjects }}>
       {children}
     </ProjectsContext.Provider>
   );
