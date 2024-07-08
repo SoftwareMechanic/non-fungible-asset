@@ -35,6 +35,12 @@ const COLLECTION_METADATA = "https://v2.akord.com/public/vaults/active/OMeLr5KxX
 
 export default class NonFungibleAssetMinter {
 
+    // static AssetType = {
+    //     Project: "Project",
+    //     Document: "Document",
+    //     Model: "Model"
+    //   };
+
     static async NonFungibleAssetMintProject(candyMachineId, metaplex, wallet, name, description){
 
         //const candyMachineId = "5NEZFGGhJrQwvGmkBqFToLU5XmkfRQTs1aJJHu7dzHFH"
@@ -52,6 +58,43 @@ export default class NonFungibleAssetMinter {
                 { trait_type: 'Type', value: "Project" },
                 { trait_type: 'Description', value: description },
                 { trait_type: 'Users', value: ""}
+            ],
+        };
+        
+        
+        var nft = await mintNft(metaplex, wallet, candyMachineId)
+        var metadataUri = await uploadMetadata(metaplex, NEW_METADATA.image, NEW_METADATA.imgType, NEW_METADATA.imgName, NEW_METADATA.description, NEW_METADATA.attributes)
+        await updateNft(metaplex, nft, metadataUri, name)
+    }
+
+    static async NonFungibleAssetMintProjectSubNft(candyMachineId, metaplex, wallet, { projectId, type, name, description, file}){
+
+        const params = {projectId, type, name, description, file};
+        for (const [key, value] of Object.entries(params)) {
+            if (value === undefined || value === null || value === "") {
+                throw new Error(`Parameter ${key} must be provided`);
+            }
+        }
+
+        if (type !== "Document" && type !== "Model") {
+            throw new Error(`sub NFT Parameter 'type' must be either "Document" or "Model"`);
+        }
+
+        // check every parameter
+
+        // Note: we could maybe not use attributes, but they are useful as a standard to show data on wallet/platforms
+        const NEW_METADATA = {
+            image: "https://arweave.net/z05OyMaDDpLFjkpfLzTHw7AkciLHGwuJD5hJbS68ESU", 
+            imgType: 'image/png',
+            imgName: 'Project Image Placeholder',
+            description: description,
+            attributes: [
+                { trait_type: 'Name', value: name },
+                { trait_type: 'Type', value: type },
+                { trait_type: 'ProjectID', value: projectId },
+                { trait_type: 'Description', value: description },
+                { trait_type: 'Users', value: ""},
+                { trait_type: 'File', value: file} // TEST Setting the content of the file as attribute, should be a link to the file
             ],
         };
         
@@ -86,7 +129,9 @@ export default class NonFungibleAssetMinter {
             sellerFeeBasisPoints: 0,
             isCollection: true,
             updateAuthority: wallet,
-        });
+        })
+
+
 
         console.log(`✅ - Created Collection NFT: ${collectionNft.address.toString()}`);
         return collectionNft;

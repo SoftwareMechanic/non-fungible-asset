@@ -154,7 +154,7 @@ async function updateNft(nft, metadataUri, newName) {
         .update({
             name: newName,
             nftOrSft: nft,
-            uri: metadataUri
+            uri: metadataUri,
         }, { commitment: 'finalized' });
     console.log(`   Success!🎉`);
     console.log(`   Updated NFT: https://explorer.solana.com/address/${nft.address}?cluster=devnet`);
