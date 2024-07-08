@@ -49,11 +49,12 @@ const CreateProject = () => {
     
     
     return (
-        <main className={styles.main}>
+        <div>
             <Navbar />
-            {/* <CreateProjectForm onCreate={(newProject) => setProjects([...projects, newProject])} /> */}
-            <CreateProjectForm onCreate={(newProject) => mintProjectNft( newProject)} />
-        </main>
+            <main className={styles.main}>
+                <CreateProjectForm onCreate={(newProject) => mintProjectNft( newProject)} />
+            </main>
+        </div>
     );
 };
 

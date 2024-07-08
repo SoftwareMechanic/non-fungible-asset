@@ -9,10 +9,11 @@ import React, { useState } from 'react';
 export default function Home() {
 
   return (
-    <main className={styles.main}>
+    <div>
       <Navbar />
       <ProjectsGrid />
-    </main>
+    </div>
+    
   );
 }
 

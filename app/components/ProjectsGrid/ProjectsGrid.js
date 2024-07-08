@@ -1,5 +1,4 @@
 "use client";
-"use strict"
 
 import React, { useEffect, useState } from 'react';
 import styles from './ProjectsGrid.module.css';
@@ -12,10 +11,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 const ProjectsGrid = () => {
     const routerProject = useRouter();
     const {projects, addProject, setProjects, clearProjects } = useProjects();
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+    const [fetched, setFetched] = useState(false);
+   
 
     const {metaplex} = useMetaplex()
     const wallet = useWallet()
@@ -29,31 +26,22 @@ const ProjectsGrid = () => {
     };
 
     const getAllProjectsNFTs = async ()  => {
+        clearProjects()
 
-        clearProjects();
         const nfts = await metaplex.nfts().findAllByOwner({owner: wallet.publicKey});
 
-
-        
         // TODO: filter nfts not of the platform
-        nfts.forEach(async element => {
-            console.log(element)
-            //get json from uri
-
+        nfts.forEach(async nft => {
             try{
-                const metadata = await fetch(element.uri)
+                const metadata = await fetch(nft.uri)
                 const metadataJson = await metadata.json()
-
-                //console.log(metadataJson)
 
                 var TypeAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")
 
                 if (TypeAttr.length > 0 && TypeAttr[0].value === "Project") {
 
-                    const projectId = element.address
- 
+                    const projectId = nft.address
                     const projectName = metadataJson.attributes.filter(attr => attr["trait_type"] === "Name")[0].value
-    
                     const projectDescription = metadataJson.attributes.filter(attr => attr["trait_type"] === "Description")[0].value
 
                     const project = {
@@ -62,26 +50,34 @@ const ProjectsGrid = () => {
                         description: projectDescription
                     }
 
-                    //usersProjects.push(project)
-                    addProject(project)
-                    //console.log(metadataJson)
+                    if (projects.filter(p => p.id === projectId).length === 0){
+                        addProject(project)
+                    }
                 }
             }
             catch(err){
                 
             }
         });
-        //setProjects(usersProjects)
     }
 
 
     useEffect(() => {
-        if (metaplex != undefined && wallet != undefined && wallet.connected && mounted){
-            getAllProjectsNFTs();
+        setFetched(false) //avoid multiple calls
+    },[])
+
+
+    useEffect(() => {
+
+        if (metaplex != undefined && wallet != undefined && wallet.connected  && !fetched){
+            setFetched(true)
+           // Correctly using an async IIFE
+            getAllProjectsNFTs()
         }
-    },[metaplex, wallet, mounted])
+    },[metaplex, wallet, fetched])
 
     return (
+        
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Projects</h1>
