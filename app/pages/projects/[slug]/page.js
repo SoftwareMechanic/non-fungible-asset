@@ -14,7 +14,7 @@ const ProjectPage = ({ params }) => {
 
   const [projectItems, setProjectItems] = useState([]) // create a context for project items?
 
-  const getAllNftsOfOwner = async () => {
+  const getAllProjectSubNftsOfOwner = async () => {
 
 
     const nfts = await metaplex.nfts().findAllByOwner({ owner: wallet.publicKey });
@@ -63,7 +63,7 @@ const ProjectPage = ({ params }) => {
 
   useEffect(() => {
     if (wallet.connected){
-      getAllNftsOfOwner()
+      getAllProjectSubNftsOfOwner()
     }
 
   },[metaplex, wallet])
