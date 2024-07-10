@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styles from './style.module.css';
-import { useProjects } from '../../../context/ProjectsContext';
 import { useRouter } from 'next/navigation';
 import CustomButton from '../CustomButton/CustomButton';
 
-const ProjectDetails = ({ project }) => {
+const ProjectDetails = ({ project,projectItems, onClick }) => {
 
     //Function to get all NFT's corresponding to the project
 
@@ -21,6 +20,16 @@ const ProjectDetails = ({ project }) => {
             </div>
 */
 
+const routerProject = useRouter();
+
+const handleUploadFileClick = () => {
+    routerProject.push('/pages/fileUpload');
+};
+
+const handleGenerateFileClick = () => {
+    routerProject.push('/pages/generateData');
+}
+
     return (
         <div className={styles.container}>
             <div>
@@ -31,8 +40,18 @@ const ProjectDetails = ({ project }) => {
                 <h2>NFTs</h2>
                 <p>Display all NFTs corresponding to the project</p>
             </div>
-                <CustomButton text="Upload file"  />
-                <CustomButton text="Generate file"  />
+            <div className={styles.grid2}>
+                {projectItems != null && projectItems.map((projectItem) => (
+                    <div key={projectItem.id} className={styles.card}>
+                        <h2>{projectItem.name}</h2>
+                        <p>{projectItem.description}</p>
+                        <p>{projectItem.type}</p>
+                        <p>{projectItem.file}</p>
+                    </div>
+                ))}
+            </div>
+                <CustomButton text="Upload file" onClick={handleUploadFileClick} />
+                <CustomButton text="Generate file" onClick={handleGenerateFileClick} />
         </div>             
     );
 

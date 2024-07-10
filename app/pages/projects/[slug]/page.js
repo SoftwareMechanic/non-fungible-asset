@@ -1,18 +1,22 @@
 "use client"
 
-
 import React, {useEffect, useState} from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMetaplex } from "../../../components/MetaplexProvider/useMetaplex";
 import Navbar from '@/app/components/Navbar/Navbar';
 import { useRouter } from 'next/navigation';
+import ProjectDetails from '@/app/components/ProjectDetails/ProjectDetails';
+import { useProjects } from '@/context/ProjectsContext';
 
 const ProjectPage = ({ params }) => {
   const router = useRouter()
   const { metaplex } = useMetaplex();
   const wallet = useWallet();
+  const { projects } = useProjects();
 
   const [projectItems, setProjectItems] = useState([]) // create a context for project items?
+
+  const project = projects.find((p) => p.id ==params.slug);
 
   const getAllProjectSubNftsOfOwner = async () => {
 
@@ -68,6 +72,10 @@ const ProjectPage = ({ params }) => {
 
   },[metaplex, wallet])
 
+  const handleMintSubNFT = () => {
+    router.push(`/pages/projects/${params.slug}/mint`)
+  }
+
   // dynamic string ticks javascript
   // const dynamicString = `This is a dynamic page with id: ${params.slug}`
 
@@ -75,7 +83,14 @@ const ProjectPage = ({ params }) => {
   return (
     <main>
       <Navbar />
-      <h1>This is a dynamic page with id: {params.slug}</h1>
+      <ProjectDetails project={project} projectItems={projectItems} onClick={handleMintSubNFT} />
+    </main>
+  );
+};
+
+export default ProjectPage;
+
+/*<h1>This is a dynamic page with id: {params.slug}</h1>
       <h2>
         create project items grid,
       </h2>
@@ -90,9 +105,4 @@ const ProjectPage = ({ params }) => {
         ))}
       </main>
       
-      <button onClick={() => router.push(`/pages/projects/${params.slug}/mint`)}>Go To Mint SubNFT</button>
-    </main>
-  );
-};
-
-export default ProjectPage;
+      <button onClick={() => router.push(`/pages/projects/${params.slug}/mint`)}>Go To Mint SubNFT</button>*/
