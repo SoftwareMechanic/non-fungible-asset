@@ -53,6 +53,7 @@ const handleGenerateFileClick = () => {
                         <p>{projectItem.description}</p>
                         <p>{projectItem.type}</p>
                         {/* <p>{projectItem.file}</p> */}
+                        <button onClick={() => console.log(JSON.stringify(projectItem.file.toString()))}> read file  </button>
                     </div>
                 ))}
             </div>
