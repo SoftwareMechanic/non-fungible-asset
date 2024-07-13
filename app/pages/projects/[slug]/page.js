@@ -16,6 +16,9 @@ const ProjectPage = ({ params }) => {
 
   const [projectItems, setProjectItems] = useState([]) // create a context for project items?
 
+  console.log(projects)
+  console.log(params.slug)
+
   const project = projects.find((p) => p.id ==params.slug);
 
   const getAllProjectSubNftsOfOwner = async () => {
@@ -23,17 +26,25 @@ const ProjectPage = ({ params }) => {
 
     const nfts = await metaplex.nfts().findAllByOwner({ owner: wallet.publicKey });
 
-    // TODO: filter nfts not of the platform
-    nfts.forEach(async nft => {
+    for (let i = 0; i < nfts.length; i++){
       try{
-          const metadata = await fetch(nft.uri)
+        const metadata = await fetch(nfts[i].uri)
           const metadataJson = await metadata.json()
 
           var TypeAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")
+          var ProjectIDAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "projectId")
 
+          // sub NFTs must have a type attribute and a projectId attribute
+          if (!(TypeAttr.length > 0 && ProjectIDAttr.length > 0)) continue;
 
-          if (TypeAttr.length > 0 && (TypeAttr[0].value === "Model" || TypeAttr[0].value === "Document")) {
-              const itemId = nft.address
+          const projectId = nfts[i].address.toString();
+
+          const nftProjectId = ProjectIDAttr[0].value.toString();
+
+          if (nftProjectId !== projectId) continue;
+
+          //if (TypeAttr.length > 0 && ProjectIDAttr === params.slug && (TypeAttr[0].value === "Model" || TypeAttr[0].value === "Document")) {
+              const itemId = nfts[i].address
               const nftName = metadataJson.attributes.filter(attr => attr["trait_type"] === "Name")[0].value
               const nftDescription = metadataJson.attributes.filter(attr => attr["trait_type"] === "Description")[0].value
               const nftType = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")[0].value
@@ -50,17 +61,19 @@ const ProjectPage = ({ params }) => {
               if (projectItems.filter(p => p.id === itemId).length === 0){
                 addProjectItem(item)
               }
-          }
+          //}
       }
-      catch(err){
-          
+      catch{
+
       }
-  });
-  }
+    }
+
+  };
+  
 
   const addProjectItem = (newProjectItem) => {
     setProjectItems((prevProjectItems) => {
-      const updatedProjects = [...prevProjectItems, newProject, newProjectItem];
+      const updatedProjects = [...prevProjectItems, newProjectItem];
       return updatedProjects;
     })
   }

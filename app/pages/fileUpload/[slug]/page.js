@@ -3,9 +3,14 @@
 import React, { useReducer } from "react";
 import Head from "next/head";
 import DropZone from "@/app/components/DropZone/DropZone";
-import styles from "./page.module.css";
+import styles from "../../../page.module.css"
 
-export default function Home() {
+import Navbar from "@/app/components/Navbar/Navbar";
+
+
+export default function MintProjectItem({params}) {
+
+
   // reducer function to handle state changes
   const reducer = (state, action) => {
     switch (action.type) {
@@ -32,10 +37,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Navbar />
+
       <main className={styles.main}>
+        <h1>{params.slug}</h1>
         <h1 className={styles.title}>Drag And Drop File Upload</h1>
         {/* Pass state data and dispatch to the DropZone component */}
-        <DropZone data={data} dispatch={dispatch} />
+        <DropZone data={data} dispatch={dispatch} projectId={params.slug}/>
       </main>
 
     </div>
