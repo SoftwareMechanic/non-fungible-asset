@@ -8,8 +8,9 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import NonFungibleAssetMinter from "@/app/classes/nonFungibleAssetMinter";
 import { getCandyMachinesPublickKeysForWallet } from "@/app/blockchain_utils/hashmap_solana_program";
 
-
-      const [name, setName] = useState('');
+const DropZone = ({ data, dispatch, projectId }) => 
+  {
+    const [name, setName] = useState('');
     const [description, setDescription] = useState([]);
 
       const subNftTypes = {
