@@ -32,35 +32,51 @@ const ProjectPage = ({ params }) => {
           const metadataJson = await metadata.json()
 
           var TypeAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")
-          var ProjectIDAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "projectId")
+
+          var ProjectIDAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "ProjectID")
 
           // sub NFTs must have a type attribute and a projectId attribute
           if (!(TypeAttr.length > 0 && ProjectIDAttr.length > 0)) continue;
 
-          const projectId = nfts[i].address.toString();
+          const projectId = project.id
 
           const nftProjectId = ProjectIDAttr[0].value.toString();
 
-          if (nftProjectId !== projectId) continue;
+          if (nftProjectId !== projectId.toString()) continue;
+
+          console.log("NFT FOUND")
 
           //if (TypeAttr.length > 0 && ProjectIDAttr === params.slug && (TypeAttr[0].value === "Model" || TypeAttr[0].value === "Document")) {
-              const itemId = nfts[i].address
-              const nftName = metadataJson.attributes.filter(attr => attr["trait_type"] === "Name")[0].value
-              const nftDescription = metadataJson.attributes.filter(attr => attr["trait_type"] === "Description")[0].value
-              const nftType = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")[0].value
-              const nftFile = metadataJson.attributes.filter(attr => attr["trait_type"] === "File")[0].value
+              const nftId = nfts[i].address.toString()
+
+              const nftNameAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Name")
+              const nftDescAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Description")
+              const nftTypeAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")
+              const nftFileAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "File")
+              
+              const nftName = nftNameAttr[0].value
+              const nftDesc = nftDescAttr[0].value
+              const nftType = nftTypeAttr[0].value
+              const nftFile = nftFileAttr[0].value
+
+              console.log(nftName)
+              console.log(nftDesc)
+              console.log(nftType)
+              console.log(nftFile)
 
               const item = {
-                  id: item,
+                  id: nftId,
                   name: nftName,
-                  description: nftDescription,
+                  description: nftDesc,
                   type: nftType,
                   file: nftFile
               }
 
-              if (projectItems.filter(p => p.id === itemId).length === 0){
+              console.log(item)
+
+              //if (projectItems.filter(p => p.id === itemId).length === 0){
                 addProjectItem(item)
-              }
+              //}
           //}
       }
       catch{
@@ -73,8 +89,11 @@ const ProjectPage = ({ params }) => {
 
   const addProjectItem = (newProjectItem) => {
     setProjectItems((prevProjectItems) => {
-      const updatedProjects = [...prevProjectItems, newProjectItem];
-      return updatedProjects;
+      const updatedProjectItems = [...prevProjectItems, newProjectItem];
+
+      console.log("Updated proj items")
+      console.log(updatedProjectItems)
+      return updatedProjectItems;
     })
   }
 
@@ -96,6 +115,7 @@ const ProjectPage = ({ params }) => {
   return (
     <main>
       <Navbar />
+      <h1>{params.slug}</h1>
       <ProjectDetails project={project} projectItems={projectItems} onClick={handleMintSubNFT} />
     </main>
   );

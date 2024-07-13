@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './style.module.css';
 import { useRouter } from 'next/navigation';
 import CustomButton from '../CustomButton/CustomButton';
 
 const ProjectDetails = ({ project,projectItems, onClick }) => {
+
+    useEffect( () => { console.log(projectItems)}, [projectItems])
 
     //Function to get all NFT's corresponding to the project
 
@@ -50,7 +52,8 @@ const handleGenerateFileClick = () => {
                         <h2>{projectItem.name}</h2>
                         <p>{projectItem.description}</p>
                         <p>{projectItem.type}</p>
-                        <p>{projectItem.file}</p>
+                        {/* <p>{projectItem.file}</p> */}
+                        <button onClick={() => console.log(JSON.stringify(projectItem.file.toString()))}> read file  </button>
                     </div>
                 ))}
             </div>

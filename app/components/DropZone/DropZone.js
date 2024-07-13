@@ -1,16 +1,13 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import FilePreview from "../FilePreview/FilePreview";
 import styles from "./style.module.css";
 
 import { useMetaplex } from "@/app/components/MetaplexProvider/useMetaplex";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import updateIcon from "../../upload.svg";
+import NonFungibleAssetMinter from "@/app/classes/nonFungibleAssetMinter";
+import { getCandyMachinesPublickKeysForWallet } from "@/app/blockchain_utils/hashmap_solana_program";
 
-
-const DropZone = ({ data, dispatch, projectId }) => 
-  {
-  
 
       const [name, setName] = useState('');
     const [description, setDescription] = useState([]);
@@ -27,10 +24,15 @@ const DropZone = ({ data, dispatch, projectId }) =>
    const { metaplex } = useMetaplex();
    const wallet = useWallet();
 
-   const {connnection } = useConnection()
+   const connnection  = useConnection()
 
-   const mintProjectSubNft = async (projectId, type, name, description, file) => {
-  
+   const nameInput = useRef(null)
+   const descriptionInput = useRef(null)
+   const [fileContent, setFileContent] = useState(undefined)
+
+   const mintProjectSubNft = async () => {
+    
+    
      var candyMachinesAddresses =  await getCandyMachinesPublickKeysForWallet(wallet, connnection.connection)
 
      var candyMachines = await NonFungibleAssetMinter.getCandyMachinesFromAddresses(metaplex, candyMachinesAddresses)
@@ -43,10 +45,10 @@ const DropZone = ({ data, dispatch, projectId }) =>
          wallet, 
          {
              projectId: projectId,
-             type: "GET INPUT FOR TYPE", // Model, Document, etc
-             name: "GET INPUT FOR NAME",
-             description: "GET INPUT FOR DESCRIPTION",
-             file: "GET INPUT FOR FILE" // URL or TEXT?
+             type: subNftType, // Model, Document, etc
+             name: nameInput.current.value,
+             description: descriptionInput.current.value,
+             file: fileContent // URL or TEXT?
          }
      );
     }
@@ -101,11 +103,9 @@ const DropZone = ({ data, dispatch, projectId }) =>
 
       reader.onload = (event) => {
         
-        const fileContent = event.target.result;
-        console.log(fileContent);
-
-         base64 = event.target.result.replace(/^data:.+;base64,/, '');
-        console.log(base64);
+        const thisFileContent = event.target.result;
+        console.log(thisFileContent);
+        setFileContent(thisFileContent)
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
@@ -117,26 +117,6 @@ const DropZone = ({ data, dispatch, projectId }) =>
       
       console.log(reader);
       
-        /*       var arrrayBuffer = base64ToArrayBuffer(reader); */
-
-/*             var blob = new Blob([reader], {type: "application/pdf"});
-        var link = window.URL.createObjectURL(blob);
-        window.open(link,'', 'height=650,width=840'); */
-
-      //data is the base64 encoded string
-
-/* 
-  function base64ToArrayBuffer(base64) {
-  var binaryString = window.atob(base64);
-  var binaryLen = binaryString.length;
-  var bytes = new Uint8Array(binaryLen);
-  for (var i = 0; i < binaryLen; i++) {
-      var ascii = binaryString.charCodeAt(i);
-      bytes[i] = ascii;
-  }
-  return bytes; 
-*/
-
 
       //files = files.filter((f) => !existingFiles.includes(f.name));
 
@@ -159,7 +139,23 @@ const DropZone = ({ data, dispatch, projectId }) =>
       // check if file already exists, if so, don't add to fileList
       // this is to prevent duplicates
       files = files.pop();
-      //files = files.filter((f) => !existingFiles.includes(f.name));
+      console.log(files);
+      var reader = new FileReader();
+
+      reader.readAsText(files, "UTF-8");
+
+      reader.onload = (event) => {
+        
+        const thisFileContent = event.target.result;
+        console.log(thisFileContent);
+        setFileContent(thisFileContent)
+      };
+      reader.onerror = (event) => {
+        console.error("Error reading file:", event.target.error);
+      };
+
+      console.log(reader);
+      
 
       // dispatch action to add selected file or files to fileList
       dispatch({ type: "ADD_FILE_TO_LIST", files });
@@ -289,7 +285,7 @@ const DropZone = ({ data, dispatch, projectId }) =>
       <FilePreview fileData={data} />
       {/* Only show upload button after selecting atleast 1 file */}
       {data.fileList.length > 0 && (
-        <button className={styles.uploadBtn} onClick={() => onMint()}>
+        <button className={styles.uploadBtn} onClick={() => mintProjectSubNft()}>
           Mint Project Item
         </button>
       )}

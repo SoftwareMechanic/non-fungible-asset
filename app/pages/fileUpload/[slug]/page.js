@@ -42,6 +42,7 @@ export default function MintProjectItem({params}) {
       <main className={styles.main}>
         <h1>{params.slug}</h1>
         {/* Pass state data and dispatch to the DropZone component */}
+        <h2>{params.slug}</h2>
         <DropZone data={data} dispatch={dispatch} projectId={params.slug}/>
       </main>
 
