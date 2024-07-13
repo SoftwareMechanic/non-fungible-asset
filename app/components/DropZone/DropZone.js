@@ -103,15 +103,16 @@ const DropZone = ({ data, dispatch, projectId }) => {
 
       reader.onload = (event) => {
         
-        const fileContent = event.target.result;
-        console.log(fileContent);
+        const thisFileContent = event.target.result;
+        console.log(thisFileContent);
+        setFileContent(thisFileContent)
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
       };
 
       console.log(reader);
-      setFileContent(reader)
+      
 
       //files = files.filter((f) => !existingFiles.includes(f.name));
 
@@ -141,15 +142,16 @@ const DropZone = ({ data, dispatch, projectId }) => {
 
       reader.onload = (event) => {
         
-        const fileContent = event.target.result;
-        console.log(fileContent);
+        const thisFileContent = event.target.result;
+        console.log(thisFileContent);
+        setFileContent(thisFileContent)
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
       };
 
       console.log(reader);
-      setFileContent(reader)
+      
 
       // dispatch action to add selected file or files to fileList
       dispatch({ type: "ADD_FILE_TO_LIST", files });
