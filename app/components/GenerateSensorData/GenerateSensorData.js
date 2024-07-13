@@ -41,6 +41,7 @@ export default function GenerateSensorData() {
             <input
                 type="text"
                 value={name}
+                multiple
                 onChange={(e) => setName(e.target.value)}
                 className={styles.input}
                 required

@@ -43,7 +43,27 @@ const DropZone = ({ data, dispatch }) => {
       const existingFiles = data.fileList.map((f) => f.name);
       // check if file already exists, if so, don't add to fileList
       // this is to prevent duplicates
-      files = files.filter((f) => !existingFiles.includes(f.name));
+      files = files.pop();
+
+    
+
+      console.log(files);
+      var reader = new FileReader();
+
+      reader.readAsText(files, "UTF-8");
+
+      reader.onload = (event) => {
+        
+        const fileContent = event.target.result;
+        console.log(fileContent);
+      };
+      reader.onerror = (event) => {
+        console.error("Error reading file:", event.target.error);
+      };
+
+      console.log(reader);
+
+      //files = files.filter((f) => !existingFiles.includes(f.name));
 
       // dispatch action to add droped file or files to fileList
       dispatch({ type: "ADD_FILE_TO_LIST", files });
@@ -63,7 +83,8 @@ const DropZone = ({ data, dispatch }) => {
       const existingFiles = data.fileList.map((f) => f.name);
       // check if file already exists, if so, don't add to fileList
       // this is to prevent duplicates
-      files = files.filter((f) => !existingFiles.includes(f.name));
+      files = files.pop();
+      //files = files.filter((f) => !existingFiles.includes(f.name));
 
       // dispatch action to add selected file or files to fileList
       dispatch({ type: "ADD_FILE_TO_LIST", files });
@@ -74,6 +95,10 @@ const DropZone = ({ data, dispatch }) => {
   const uploadFiles = async () => {
     // get the files from the fileList as an array
     let files = data.fileList;
+
+    let lastFile = [fileData.fileList[fileData.fileList.length - 1]];
+
+    var jsonFile = JSON.stringify(lastFile);
     // initialize formData object
     const formData = new FormData();
     // loop over files and add to formData
@@ -109,14 +134,14 @@ const DropZone = ({ data, dispatch }) => {
         <input
           id="fileSelect"
           type="file"
-          multiple
+          
           className={styles.files}
           onChange={(e) => handleFileSelect(e)}
         />
-        <label htmlFor="fileSelect">You can select multiple Files</label>
+        <label htmlFor="fileSelect">Select file</label>
 
         <h3 className={styles.uploadMessage}>
-          or drag &amp; drop your files here
+          or drag &amp; drop your file here
         </h3>
       </div>
       {/* Pass the selectect or dropped files as props */}
