@@ -5,17 +5,23 @@ import styles from "./style.module.css";
 
 import { useMetaplex } from "@/app/components/MetaplexProvider/useMetaplex";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import updateIcon from "../../upload.svg";
 
 
-const DropZone = ({ data, dispatch, projectId }) => {
+const DropZone = ({ data, dispatch, projectId }) => 
+  {
+  
 
-  const subNftTypes = {
-    Model: "Model",
-    Document: "Document",
-    Json: "Json"
-  }
+      const [name, setName] = useState('');
+    const [description, setDescription] = useState([]);
 
-  const [subNftType, setSubNftType] = useState(subNftTypes.Model)
+      const subNftTypes = {
+        Model: "Model",
+        Document: "Document",
+        Json: "Json"
+      };
+
+  const [subNftType, setSubNftType] = useState(subNftTypes.Model);
 
 
    const { metaplex } = useMetaplex();
@@ -87,23 +93,50 @@ const DropZone = ({ data, dispatch, projectId }) => {
       // this is to prevent duplicates
       files = files.pop();
 
-    
-
       console.log(files);
+
       var reader = new FileReader();
 
-      reader.readAsText(files, "UTF-8");
+      var base64;
 
       reader.onload = (event) => {
         
         const fileContent = event.target.result;
         console.log(fileContent);
+
+         base64 = event.target.result.replace(/^data:.+;base64,/, '');
+        console.log(base64);
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
       };
 
+      reader.readAsText(files, "UTF-8");
+
+
+      
       console.log(reader);
+      
+        /*       var arrrayBuffer = base64ToArrayBuffer(reader); */
+
+/*             var blob = new Blob([reader], {type: "application/pdf"});
+        var link = window.URL.createObjectURL(blob);
+        window.open(link,'', 'height=650,width=840'); */
+
+      //data is the base64 encoded string
+
+/* 
+  function base64ToArrayBuffer(base64) {
+  var binaryString = window.atob(base64);
+  var binaryLen = binaryString.length;
+  var bytes = new Uint8Array(binaryLen);
+  for (var i = 0; i < binaryLen; i++) {
+      var ascii = binaryString.charCodeAt(i);
+      bytes[i] = ascii;
+  }
+  return bytes; 
+*/
+
 
       //files = files.filter((f) => !existingFiles.includes(f.name));
 
@@ -141,10 +174,14 @@ const DropZone = ({ data, dispatch, projectId }) => {
     setSubNftType(selectedOption)
   }
 
-  // // to handle file uploads
+  // // to handle file uploads  
   // const uploadFiles = async () => {
   //   // get the files from the fileList as an array
   //   let files = data.fileList;
+
+  //let lastFile = [fileData.fileList[fileData.fileList.length - 1]];
+
+  //var jsonFile = JSON.stringify(lastFile);
   //   // initialize formData object
   //   const formData = new FormData();
   //   // loop over files and add to formData
@@ -168,12 +205,34 @@ const DropZone = ({ data, dispatch, projectId }) => {
 
   return (
     <>
-    <label for="labelInput">Name</label>
-    <input type="text" id="labelInput" name="label"/>
+{/*     <label for="labelInput">Name</label>
+    <input type="text" id="labelInput" name="label"/> */}
 
-    <label for="descriptionInput">Description</label>
-    <input type="text" id="descriptionInput" name="description"/>
-    <select style={{minWidth:"100px"}} id="typeDropdown" onChange={() => handleDropdownChange()}>
+<div className={styles.container}>
+    <label className={styles.label}>
+    Name:
+            <input
+                type="text"
+                value={name}
+                multiple
+                onChange={(e) => setName(e.target.value)}
+                className={styles.input}
+                required
+            />
+        </label>
+        
+        <label className={styles.label}>
+    Description:
+            <input
+                type="text"
+                value={description}
+                multiple
+                onChange={(e) => setDescription(e.target.value)}
+                className={styles.input}
+                required
+            />
+        </label>
+        <select className={styles.select} style={{minWidth:"100px"}} id="typeDropdown" onChange={() => handleDropdownChange()}>
         {Object.values(subNftTypes).map((value) =>
           <option 
             value={value}
@@ -183,15 +242,21 @@ const DropZone = ({ data, dispatch, projectId }) => {
         </option> 
         )}
    </select>
+</div>
+
+    {/* <label for="descriptionInput">Description</label> */}
+{/*     <input type="text" id="descriptionInput" name="description"/> */}
+
       <div
         className={styles.dropzone}
         onDrop={(e) => handleDrop(e)}
         onDragOver={(e) => handleDragOver(e)}
         onDragEnter={(e) => handleDragEnter(e)}
         onDragLeave={(e) => handleDragLeave(e)}
+        style={{height: "200px"}}
       >
-        <Image src="@/upload.svg" alt="upload" height={50} width={50} />
 
+    <Image src={updateIcon} alt="upload" height="50" width="50" style={{backgroundColor : "transparent"}}/>
         
         {subNftType == subNftTypes.Model ?
           <input

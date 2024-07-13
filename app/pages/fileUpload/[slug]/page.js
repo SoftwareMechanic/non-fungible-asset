@@ -41,7 +41,6 @@ export default function MintProjectItem({params}) {
 
       <main className={styles.main}>
         <h1>{params.slug}</h1>
-        <h1 className={styles.title}>Drag And Drop File Upload</h1>
         {/* Pass state data and dispatch to the DropZone component */}
         <DropZone data={data} dispatch={dispatch} projectId={params.slug}/>
       </main>
