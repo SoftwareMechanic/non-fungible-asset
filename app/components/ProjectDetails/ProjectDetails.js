@@ -20,10 +20,14 @@ const ProjectDetails = ({ project,projectItems, onClick }) => {
             </div>
 */
 
+//Generate the tick fro dynamic string
+
+
 const routerProject = useRouter();
 
 const handleUploadFileClick = () => {
-    routerProject.push('/pages/fileUpload');
+    `Hello, ${name}!`
+    routerProject.push(`/pages/fileUpload/${project.id}`);
 };
 
 const handleGenerateFileClick = () => {

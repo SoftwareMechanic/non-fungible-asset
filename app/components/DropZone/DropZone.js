@@ -3,7 +3,49 @@ import Image from "next/image";
 import FilePreview from "../FilePreview/FilePreview";
 import styles from "./style.module.css";
 
-const DropZone = ({ data, dispatch }) => {
+import { useMetaplex } from "@/app/components/MetaplexProvider/useMetaplex";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+
+
+const DropZone = ({ data, dispatch, projectId }) => {
+
+  const subNftTypes = {
+    Model: "Model",
+    Document: "Document",
+    Json: "Json"
+  }
+
+  const [subNftType, setSubNftType] = useState(subNftTypes.Model)
+
+
+   const { metaplex } = useMetaplex();
+   const wallet = useWallet();
+
+   const {connnection } = useConnection()
+
+   const mintProjectSubNft = async (projectId, type, name, description, file) => {
+  
+     var candyMachinesAddresses =  await getCandyMachinesPublickKeysForWallet(wallet, connnection.connection)
+
+     var candyMachines = await NonFungibleAssetMinter.getCandyMachinesFromAddresses(metaplex, candyMachinesAddresses)
+
+     // User should have alreadt created the candy machine
+     const candyMachine = candyMachines[0]
+     await NonFungibleAssetMinter.NonFungibleAssetMintProjectSubNft(
+         candyMachine.address, 
+         metaplex,
+         wallet, 
+         {
+             projectId: projectId,
+             type: "GET INPUT FOR TYPE", // Model, Document, etc
+             name: "GET INPUT FOR NAME",
+             description: "GET INPUT FOR DESCRIPTION",
+             file: "GET INPUT FOR FILE" // URL or TEXT?
+         }
+     );
+    }
+
+
   // onDragEnter sets inDropZone to true
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -70,33 +112,56 @@ const DropZone = ({ data, dispatch }) => {
     }
   };
 
-  // to handle file uploads
-  const uploadFiles = async () => {
-    // get the files from the fileList as an array
-    let files = data.fileList;
-    // initialize formData object
-    const formData = new FormData();
-    // loop over files and add to formData
-    files.forEach((file) => formData.append("files", file));
 
-    // Upload the files as a POST request to the server using fetch
-    // Note: /api/fileupload is not a real endpoint, it is just an example
-    const response = await fetch("/api/fileupload", {
-      method: "POST",
-      body: formData,
-    });
+  const handleDropdownChange = () => {
+    const select = document.getElementById("typeDropdown")
+    const selectedOption = select.options[select.selectedIndex].value
 
-    //successful file upload
-    if (response.ok) {
-      alert("Files uploaded successfully");
-    } else {
-      // unsuccessful file upload
-      alert("Error uploading files");
-    }
-  };
+    setSubNftType(selectedOption)
+  }
+
+  // // to handle file uploads
+  // const uploadFiles = async () => {
+  //   // get the files from the fileList as an array
+  //   let files = data.fileList;
+  //   // initialize formData object
+  //   const formData = new FormData();
+  //   // loop over files and add to formData
+  //   files.forEach((file) => formData.append("files", file));
+
+  //   // Upload the files as a POST request to the server using fetch
+  //   // Note: /api/fileupload is not a real endpoint, it is just an example
+  //   const response = await fetch("/api/fileupload", {
+  //     method: "POST",
+  //     body: formData,
+  //   });
+
+  //   //successful file upload
+  //   if (response.ok) {
+  //     alert("Files uploaded successfully");
+  //   } else {
+  //     // unsuccessful file upload
+  //     alert("Error uploading files");
+  //   }
+  // };
 
   return (
     <>
+    <label for="labelInput">Name</label>
+    <input type="text" id="labelInput" name="label"/>
+
+    <label for="descriptionInput">Description</label>
+    <input type="text" id="descriptionInput" name="description"/>
+    <select style={{minWidth:"100px"}} id="typeDropdown" onChange={() => handleDropdownChange()}>
+        {Object.values(subNftTypes).map((value) =>
+          <option 
+            value={value}
+            key={value}
+            >
+              {value}
+        </option> 
+        )}
+   </select>
       <div
         className={styles.dropzone}
         onDrop={(e) => handleDrop(e)}
@@ -106,13 +171,28 @@ const DropZone = ({ data, dispatch }) => {
       >
         <Image src="@/upload.svg" alt="upload" height={50} width={50} />
 
-        <input
-          id="fileSelect"
-          type="file"
-          multiple
-          className={styles.files}
-          onChange={(e) => handleFileSelect(e)}
-        />
+        
+        {subNftType == subNftTypes.Model ?
+          <input
+            id="fileSelect"
+            type="file"
+            multiple
+            className={styles.files}
+            onChange={(e) => handleFileSelect(e)}
+            accept=".ifc"
+          />
+          :
+          <input
+            id="fileSelect"
+            type="file"
+            multiple
+            className={styles.files}
+            onChange={(e) => handleFileSelect(e)}
+            accept=".pdf"
+          />
+        }
+
+        
         <label htmlFor="fileSelect">You can select multiple Files</label>
 
         <h3 className={styles.uploadMessage}>
@@ -123,8 +203,8 @@ const DropZone = ({ data, dispatch }) => {
       <FilePreview fileData={data} />
       {/* Only show upload button after selecting atleast 1 file */}
       {data.fileList.length > 0 && (
-        <button className={styles.uploadBtn} onClick={uploadFiles}>
-          Upload
+        <button className={styles.uploadBtn} onClick={() => onMint()}>
+          Mint Project Item
         </button>
       )}
     </>

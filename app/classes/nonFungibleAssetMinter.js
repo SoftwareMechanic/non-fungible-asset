@@ -84,19 +84,18 @@ export default class NonFungibleAssetMinter {
 
         // Note: we could maybe not use attributes, but they are useful as a standard to show data on wallet/platforms
         const NEW_METADATA = {
-            image: "https://arweave.net/z05OyMaDDpLFjkpfLzTHw7AkciLHGwuJD5hJbS68ESU", 
+            image: "https://arweave.net/0CWBDQz42UhQin2V76beTzXHVgPsPzqMR6xZwX7_7Kg", 
             imgType: 'image/png',
-            imgName: 'Project Image Placeholder',
+            imgName: 'Model Image Placeholder',
             description: description,
             attributes: [
                 { trait_type: 'Name', value: name },
                 { trait_type: 'Type', value: type },
                 { trait_type: 'ProjectID', value: projectId },
                 { trait_type: 'Description', value: description },
-                { trait_type: 'Users', value: ""},
                 { trait_type: 'File', value: file} // TEST Setting the content of the file as attribute, should be a link to the file
             ],
-        };
+        };  
         
         
         var nft = await mintNft(metaplex, wallet, candyMachineId)
