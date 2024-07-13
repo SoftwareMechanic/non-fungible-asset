@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import FilePreview from "../FilePreview/FilePreview";
 import styles from "./style.module.css";
 
 import { useMetaplex } from "@/app/components/MetaplexProvider/useMetaplex";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import NonFungibleAssetMinter from "@/app/classes/nonFungibleAssetMinter";
+import { getCandyMachinesPublickKeysForWallet } from "@/app/blockchain_utils/hashmap_solana_program";
 
 
 const DropZone = ({ data, dispatch, projectId }) => {
@@ -21,10 +23,15 @@ const DropZone = ({ data, dispatch, projectId }) => {
    const { metaplex } = useMetaplex();
    const wallet = useWallet();
 
-   const {connnection } = useConnection()
+   const connnection  = useConnection()
 
-   const mintProjectSubNft = async (projectId, type, name, description, file) => {
-  
+   const nameInput = useRef(null)
+   const descriptionInput = useRef(null)
+   const [fileContent, setFileContent] = useState(undefined)
+
+   const mintProjectSubNft = async () => {
+    
+    
      var candyMachinesAddresses =  await getCandyMachinesPublickKeysForWallet(wallet, connnection.connection)
 
      var candyMachines = await NonFungibleAssetMinter.getCandyMachinesFromAddresses(metaplex, candyMachinesAddresses)
@@ -37,10 +44,10 @@ const DropZone = ({ data, dispatch, projectId }) => {
          wallet, 
          {
              projectId: projectId,
-             type: "GET INPUT FOR TYPE", // Model, Document, etc
-             name: "GET INPUT FOR NAME",
-             description: "GET INPUT FOR DESCRIPTION",
-             file: "GET INPUT FOR FILE" // URL or TEXT?
+             type: subNftType, // Model, Document, etc
+             name: nameInput.current.value,
+             description: descriptionInput.current.value,
+             file: fileContent // URL or TEXT?
          }
      );
     }
@@ -104,6 +111,7 @@ const DropZone = ({ data, dispatch, projectId }) => {
       };
 
       console.log(reader);
+      setFileContent(reader)
 
       //files = files.filter((f) => !existingFiles.includes(f.name));
 
@@ -126,7 +134,22 @@ const DropZone = ({ data, dispatch, projectId }) => {
       // check if file already exists, if so, don't add to fileList
       // this is to prevent duplicates
       files = files.pop();
-      //files = files.filter((f) => !existingFiles.includes(f.name));
+      console.log(files);
+      var reader = new FileReader();
+
+      reader.readAsText(files, "UTF-8");
+
+      reader.onload = (event) => {
+        
+        const fileContent = event.target.result;
+        console.log(fileContent);
+      };
+      reader.onerror = (event) => {
+        console.error("Error reading file:", event.target.error);
+      };
+
+      console.log(reader);
+      setFileContent(reader)
 
       // dispatch action to add selected file or files to fileList
       dispatch({ type: "ADD_FILE_TO_LIST", files });
@@ -169,10 +192,10 @@ const DropZone = ({ data, dispatch, projectId }) => {
   return (
     <>
     <label for="labelInput">Name</label>
-    <input type="text" id="labelInput" name="label"/>
+    <input type="text" id="labelInput" name="name" ref={nameInput}/>
 
-    <label for="descriptionInput">Description</label>
-    <input type="text" id="descriptionInput" name="description"/>
+    <label for="descriptionInput" >Description</label>
+    <input type="text" id="descriptionInput" name="description" ref={descriptionInput}/>
     <select style={{minWidth:"100px"}} id="typeDropdown" onChange={() => handleDropdownChange()}>
         {Object.values(subNftTypes).map((value) =>
           <option 
@@ -224,7 +247,7 @@ const DropZone = ({ data, dispatch, projectId }) => {
       <FilePreview fileData={data} />
       {/* Only show upload button after selecting atleast 1 file */}
       {data.fileList.length > 0 && (
-        <button className={styles.uploadBtn} onClick={() => onMint()}>
+        <button className={styles.uploadBtn} onClick={() => mintProjectSubNft()}>
           Mint Project Item
         </button>
       )}
