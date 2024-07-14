@@ -52,7 +52,7 @@ export default function GenerateSensorData() {
 
         <div className={styles.grid2}>
                 {generatedData != null && generatedData.map((generatedItem) => (
-                    <div className={styles.card}>
+                    <div key={"TODO"} className={styles.card}>
                         <h2>{generatedItem.name}</h2>
                         <p>{generatedItem.date}</p>
                     </div>
