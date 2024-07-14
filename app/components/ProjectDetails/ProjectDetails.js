@@ -79,8 +79,6 @@ const handleGenerateFileClick = () => {
             </div>
                 <CustomButton text="Upload file" onClick={handleUploadFileClick} />
                 <CustomButton text="Generate file" onClick={handleGenerateFileClick} />
-
-                <iframe src={viewerUrl}/>
         </div>             
     );
 

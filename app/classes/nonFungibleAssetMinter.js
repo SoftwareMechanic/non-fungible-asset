@@ -135,7 +135,7 @@ export default class NonFungibleAssetMinter {
         
         
         var nft = await NonFungibleAssetMinter.mintNft(metaplex, wallet, candyMachineId)
-        var metadataUri = await NonFungibleAssetMinter.uploadMetadata(metaplex, NEW_METADATA.image, NEW_METADATA.imgType, NEW_METADATA.imgName, NEW_METADATA.description, NEW_METADATA.attributes)
+        var metadataUri = await NonFungibleAssetMinter.uploadMetadata(metaplex, NEW_METADATA)
         await NonFungibleAssetMinter.updateNft(metaplex, nft, metadataUri, name)
     }
 

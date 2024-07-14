@@ -345,7 +345,7 @@ const DropZone = ({ data, dispatch, projectId }) =>
           Mint Project Item
         </button>
       )}
-      <iframe src={pdfSource}/>
+      
     </>
   );
 };
