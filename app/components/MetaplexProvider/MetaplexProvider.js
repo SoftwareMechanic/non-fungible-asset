@@ -18,9 +18,15 @@ export const MetaplexProvider = ({ children }) => {
         providerUrl: 'https://api.devnet.solana.com',
         timeout: 60000,
       }))
+
       ,
     [connection, wallet]
   );
+
+  
+ 
+  // metaplex.storage().uploadAll({extension: 'json', o})
+  // await metaplex.nfts().uploadMetadata({ properties :{files:[ {type: 'application/pdf', u}]}}).then((s) => s.)
 
   return (
     <MetaplexContext.Provider value={{ metaplex }}>

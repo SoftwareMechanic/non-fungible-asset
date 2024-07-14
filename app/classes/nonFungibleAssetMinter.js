@@ -4,9 +4,12 @@
 import WalletConnector from './walletConnector';
 
 import { Connection, Keypair, PublicKey, clusterApiUrl } from"@solana/web3.js";
-import { Metaplex, walletAdapterIdentity} from "@metaplex-foundation/js"
+import { Metaplex, isMetaplexFile, walletAdapterIdentity} from "@metaplex-foundation/js"
+import {createGenericFileFromBrowserFile} from "@metaplex-foundation/umi"
+
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMetaplex } from '../components/MetaplexProvider/useMetaplex';
+
 
 import * as HashmapSolanaProgram from "../blockchain_utils/hashmap_solana_program"
 
@@ -41,10 +44,79 @@ export default class NonFungibleAssetMinter {
     //     Model: "Model"
     //   };
 
+
+    static async mintNft(metaplex, wallet, candyMachineId) {
+        console.log(`Step 1 - Minting NFT`);
+        const candyMachine = await metaplex
+            .candyMachines()
+            .findByAddress({ address: new PublicKey(candyMachineId) });
+    
+        
+        console.log(candyMachine)
+    
+        let { nft, response } = await metaplex.candyMachines()
+            .mint({
+                candyMachine,
+                //collectionUpdateAuthority: candyMachine.authorityAddress,
+                //collectionUpdateAuthority: candyMachine.collectionMintAddress,
+                collectionUpdateAuthority: new PublicKey( wallet.publicKey),
+                
+                
+                
+            }, 
+            { 
+                commitment: 'finalized'
+        })
+        
+    
+        console.log(`✅ - Minted NFT: ${nft.address.toString()}`);
+        console.log(` Mint address is: ${nft.mint.address.toString()}`);
+        console.log(`     https://explorer.solana.com/address/${nft.address.toString()}?cluster=devnet`);
+    
+    
+        return nft;
+    }
+    
+    static async  uploadMetadata(metaplex, metadata) {
+        console.log(`Step 2 - Uploading MetaData`);
+
+        
+        const { uri } = await metaplex
+            .nfts()
+            .uploadMetadata(metadata);
+        return uri;
+    }
+    
+    static async  updateNft(metaplex, nft, metadataUri, newName) {
+        console.log(`Step 3 - Updating NFT`);
+        await metaplex
+            .nfts()
+            .update({
+                name: newName,
+                nftOrSft: nft,
+                uri: metadataUri,
+                
+                
+            }, { commitment: 'finalized' });
+        console.log(`   Success!🎉`);
+        console.log(`   Updated NFT: https://explorer.solana.com/address/${nft.address}?cluster=devnet`);
+    }
+    
+
+
+    static async uploadFile(file, metaplex){
+        // Upload the asset.
+        //const genericFile = await createGenericFileFromBrowserFile(file);
+        const uri = await metaplex.storage().upload(file)
+
+        
+        return uri
+    }
+
     static async NonFungibleAssetMintProject(candyMachineId, metaplex, wallet, name, description){
 
         //const candyMachineId = "5NEZFGGhJrQwvGmkBqFToLU5XmkfRQTs1aJJHu7dzHFH"
-
+        
         
 
         // Note: we could maybe not use attributes, but they are useful as a standard to show data on wallet/platforms
@@ -62,9 +134,9 @@ export default class NonFungibleAssetMinter {
         };
         
         
-        var nft = await mintNft(metaplex, wallet, candyMachineId)
-        var metadataUri = await uploadMetadata(metaplex, NEW_METADATA.image, NEW_METADATA.imgType, NEW_METADATA.imgName, NEW_METADATA.description, NEW_METADATA.attributes)
-        await updateNft(metaplex, nft, metadataUri, name)
+        var nft = await NonFungibleAssetMinter.mintNft(metaplex, wallet, candyMachineId)
+        var metadataUri = await NonFungibleAssetMinter.uploadMetadata(metaplex, NEW_METADATA.image, NEW_METADATA.imgType, NEW_METADATA.imgName, NEW_METADATA.description, NEW_METADATA.attributes)
+        await NonFungibleAssetMinter.updateNft(metaplex, nft, metadataUri, name)
     }
 
     static async NonFungibleAssetMintProjectSubNft(candyMachineId, metaplex, wallet, { projectId, type, name, description, file}){
@@ -82,25 +154,42 @@ export default class NonFungibleAssetMinter {
 
         // check every parameter
 
+
+        const uploadedFileUri =  await NonFungibleAssetMinter.uploadFile(file, metaplex)
+
         // Note: we could maybe not use attributes, but they are useful as a standard to show data on wallet/platforms
         const NEW_METADATA = {
-            image: "https://arweave.net/0CWBDQz42UhQin2V76beTzXHVgPsPzqMR6xZwX7_7Kg", 
-            imgType: 'image/png',
-            imgName: 'Model Image Placeholder',
+            name : "new-metadata",
             description: description,
+            image: "https://arweave.net/0CWBDQz42UhQin2V76beTzXHVgPsPzqMR6xZwX7_7Kg", 
+            
+            //imgName: 'Model Image Placeholder',
+            
             attributes: [
                 { trait_type: 'Name', value: name },
                 { trait_type: 'Type', value: type },
                 { trait_type: 'ProjectID', value: projectId },
                 { trait_type: 'Description', value: description },
-                { trait_type: 'File', value: file} // TEST Setting the content of the file as attribute, should be a link to the file
+                //{ trait_type: 'File', value: file} // TEST Setting the content of the file as attribute, should be a link to the file
             ],
+            properties: {
+                files: [
+                    {
+                        type: 'image/png',
+                        uri: "https://arweave.net/0CWBDQz42UhQin2V76beTzXHVgPsPzqMR6xZwX7_7Kg",
+                    },
+                    {
+                        type: 'application/pdf',
+                        uri: uploadedFileUri
+                    }
+                ]
+            }
         };  
         
-        
-        var nft = await mintNft(metaplex, wallet, candyMachineId)
-        var metadataUri = await uploadMetadata(metaplex, NEW_METADATA.image, NEW_METADATA.imgType, NEW_METADATA.imgName, NEW_METADATA.description, NEW_METADATA.attributes)
-        await updateNft(metaplex, nft, metadataUri, name)
+
+        var nft = await NonFungibleAssetMinter.mintNft(metaplex, wallet, candyMachineId)
+        var metadataUri = await NonFungibleAssetMinter.uploadMetadata(metaplex, NEW_METADATA)
+        await NonFungibleAssetMinter.updateNft(metaplex, nft, metadataUri, name)
     }
     
     static async getCandyMachinesFromAddresses(metaplex, listOfAddress) {
@@ -191,75 +280,11 @@ export default class NonFungibleAssetMinter {
         return candyMachine;
     }
     
+
+    
     
 
 }
-async function mintNft(metaplex, wallet, candyMachineId) {
-    console.log(`Step 1 - Minting NFT`);
-    const candyMachine = await metaplex
-        .candyMachines()
-        .findByAddress({ address: new PublicKey(candyMachineId) });
-
-    
-    console.log(candyMachine)
-
-    let { nft, response } = await metaplex.candyMachines()
-        .mint({
-            candyMachine,
-            //collectionUpdateAuthority: candyMachine.authorityAddress,
-            //collectionUpdateAuthority: candyMachine.collectionMintAddress,
-            collectionUpdateAuthority: new PublicKey( wallet.publicKey),
-            
-            
-        }, 
-        { 
-            commitment: 'finalized'
-        })
-
-    console.log(`✅ - Minted NFT: ${nft.address.toString()}`);
-    console.log(` Mint address is: ${nft.mint.address.toString()}`);
-    console.log(`     https://explorer.solana.com/address/${nft.address.toString()}?cluster=devnet`);
-
-
-    return nft;
-}
-
-async function uploadMetadata(metaplex, imgUri, imgType, nftName, description, attributes) {
-    console.log(`Step 2 - Uploading MetaData`);
-    const { uri } = await metaplex
-        .nfts()
-        .uploadMetadata({
-            name: nftName,
-            description: description,
-            image: imgUri,
-            attributes: attributes,
-            properties: {
-                files: [
-                    {
-                        type: imgType,
-                        uri: imgUri,
-                    },
-                ]
-            }
-        });
-    return uri;
-}
-
-async function updateNft(metaplex, nft, metadataUri, newName) {
-    console.log(`Step 3 - Updating NFT`);
-    await metaplex
-        .nfts()
-        .update({
-            name: newName,
-            nftOrSft: nft,
-            uri: metadataUri,
-            
-            
-        }, { commitment: 'finalized' });
-    console.log(`   Success!🎉`);
-    console.log(`   Updated NFT: https://explorer.solana.com/address/${nft.address}?cluster=devnet`);
-}
-
 
 
 

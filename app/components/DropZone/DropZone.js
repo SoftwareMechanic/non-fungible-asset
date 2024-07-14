@@ -7,17 +7,20 @@ import { useMetaplex } from "@/app/components/MetaplexProvider/useMetaplex";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import NonFungibleAssetMinter from "@/app/classes/nonFungibleAssetMinter";
 import { getCandyMachinesPublickKeysForWallet } from "@/app/blockchain_utils/hashmap_solana_program";
+import { createGenericFileFromBrowserFile } from "@metaplex-foundation/umi";
 
+
+import updateIcon from "../../upload.svg"
 const DropZone = ({ data, dispatch, projectId }) => 
   {
     const [name, setName] = useState('');
     const [description, setDescription] = useState([]);
 
-      const subNftTypes = {
-        Model: "Model",
-        Document: "Document",
-        Json: "Json"
-      };
+    const subNftTypes = {
+      Model: "Model",
+      Document: "Document",
+      Json: "Json"
+    };
 
   const [subNftType, setSubNftType] = useState(subNftTypes.Model);
 
@@ -30,6 +33,9 @@ const DropZone = ({ data, dispatch, projectId }) =>
    const nameInput = useRef(null)
    const descriptionInput = useRef(null)
    const [fileContent, setFileContent] = useState(undefined)
+
+
+    const [pdfSource, setPdfSource] = useState("")
 
    const mintProjectSubNft = async () => {
     
@@ -104,17 +110,27 @@ const DropZone = ({ data, dispatch, projectId }) =>
 
       reader.onload = (event) => {
         
-        const thisFileContent = event.target.result;
-        console.log(thisFileContent);
-        setFileContent(thisFileContent)
+        if (subNftType !== subNftTypes.Model){
+          const thisFileContent = new Uint8Array(event.target.result)
+          console.log(thisFileContent);
+          setFileContent(thisFileContent)
+        }
+        else{
+          const thisFileContent = event.target.result;
+          console.log(thisFileContent);
+          setFileContent(thisFileContent)
+        }
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
       };
 
-      reader.readAsText(files, "UTF-8");
-
-
+      if (subNftType === subNftTypes.Model){
+        reader.readAsText(files, "UTF-8");
+      }
+      else{
+        reader.readAsArrayBuffer(files)
+      }
       
       console.log(reader);
       
@@ -143,13 +159,50 @@ const DropZone = ({ data, dispatch, projectId }) =>
       console.log(files);
       var reader = new FileReader();
 
-      reader.readAsText(files, "UTF-8");
+      // if (subNftType === subNftTypes.Model){
+      //   reader.readAsText(files, "UTF-8");
+      // }
+      // else{
+        reader.readAsArrayBuffer(files)
 
-      reader.onload = (event) => {
+       
+      //}
+
+      reader.onload = async(event) => {
         
-        const thisFileContent = event.target.result;
-        console.log(thisFileContent);
-        setFileContent(thisFileContent)
+        
+
+          if (subNftType !== subNftTypes.Model){
+            const thisFileContent = new Uint8Array(event.target.result)
+            console.log(thisFileContent);
+            setFileContent(thisFileContent)
+
+
+            // Upload the asset.
+                        
+            
+
+            //encode byte array to string
+
+            
+
+            // var blob = new Blob([thisFileContent], {type: "application/pdf"});
+            // var link = window.URL.createObjectURL(blob);
+            // window.open(link,'', 'height=650,width=840');
+
+            // setPdfSource(link)
+          }
+          else{
+            const thisFileContent = new Uint8Array(event.target.result);
+            console.log(thisFileContent);
+            setFileContent(thisFileContent)
+
+           
+          }
+         
+        
+
+        
       };
       reader.onerror = (event) => {
         console.error("Error reading file:", event.target.error);
@@ -215,6 +268,7 @@ const DropZone = ({ data, dispatch, projectId }) =>
                 onChange={(e) => setName(e.target.value)}
                 className={styles.input}
                 required
+                ref={nameInput}
             />
         </label>
         
@@ -227,6 +281,7 @@ const DropZone = ({ data, dispatch, projectId }) =>
                 onChange={(e) => setDescription(e.target.value)}
                 className={styles.input}
                 required
+                ref={descriptionInput}
             />
         </label>
         <select className={styles.select} style={{minWidth:"100px"}} id="typeDropdown" onChange={() => handleDropdownChange()}>
@@ -290,6 +345,7 @@ const DropZone = ({ data, dispatch, projectId }) =>
           Mint Project Item
         </button>
       )}
+      <iframe src={pdfSource}/>
     </>
   );
 };

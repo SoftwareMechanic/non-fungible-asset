@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    max-width: 600px;
+    max-width: 1000px;
     margin-top: 1rem;
   }
 
@@ -28,7 +28,7 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 1rem;
-    width: 400px;
+    width: 800px;
 }
 
 .card h2 {

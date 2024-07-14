@@ -7,6 +7,8 @@ const ProjectDetails = ({ project,projectItems, onClick }) => {
 
     useEffect( () => { console.log(projectItems)}, [projectItems])
 
+    const [viewerUrl, setViewerUrl] = useState("")
+
     //Function to get all NFT's corresponding to the project
 
     /*Instad of projects use list with all NFT's
@@ -28,7 +30,6 @@ const ProjectDetails = ({ project,projectItems, onClick }) => {
 const routerProject = useRouter();
 
 const handleUploadFileClick = () => {
-    `Hello, ${name}!`
     routerProject.push(`/pages/fileUpload/${project.id}`);
 };
 
@@ -52,13 +53,34 @@ const handleGenerateFileClick = () => {
                         <h2>{projectItem.name}</h2>
                         <p>{projectItem.description}</p>
                         <p>{projectItem.type}</p>
-                        {/* <p>{projectItem.file}</p> */}
-                        <button onClick={() => console.log(JSON.stringify(projectItem.file.toString()))}> read file  </button>
+
+                        <button onClick={async() => {
+                            console.log(projectItem.file)
+
+                            // const file = await fetch(projectItem.file)
+                            // const blob = await file.blob()
+                            // const buffer = await blob.arrayBuffer()
+                            // //const fileBlob = await blob.arrayBuffer()
+
+                            // console.log(buffer)
+                            
+                            // const blob2 = new Blob([buffer], {type: 'application/pdf'})
+                            // //var blob = new Blob(Object.values(projectItem.file), {type: "application/pdf"});
+                            // var link = window.URL.createObjectURL(blob2);
+                            // setViewerUrl(link)
+                            // console.log(link)
+                            // window.open(link,'', 'height=650,width=840');
+
+                            routerProject.push("/pages/projects/" + project.id + "/" + projectItem.id)
+                        }
+                            }> read file  </button>
                     </div>
                 ))}
             </div>
                 <CustomButton text="Upload file" onClick={handleUploadFileClick} />
                 <CustomButton text="Generate file" onClick={handleGenerateFileClick} />
+
+                <iframe src={viewerUrl}/>
         </div>             
     );
 

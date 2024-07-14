@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ProjectsProvider } from '../context/ProjectsContext';
+import { ProjectItemsProvider } from "@/context/ProjectItemsContext";
 //import "bootstrap/dist/css/bootstrap.min.css";
 import BlockchainWallet from "./components/BlockchainWallet/BlockchainWallet";
 
@@ -21,10 +22,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-      <ProjectsProvider initialProjects={initialProjects}>
-        <BlockchainWallet>
-          {children}
-        </BlockchainWallet>
+        <ProjectsProvider initialProjects={initialProjects}>
+          <ProjectItemsProvider initialProjectItems={[]}>
+            <BlockchainWallet>
+              {children}
+            </BlockchainWallet>
+          </ProjectItemsProvider>
         </ProjectsProvider>
       </body>
     </html>

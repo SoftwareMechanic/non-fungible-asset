@@ -7,22 +7,21 @@ import Navbar from '@/app/components/Navbar/Navbar';
 import { useRouter } from 'next/navigation';
 import ProjectDetails from '@/app/components/ProjectDetails/ProjectDetails';
 import { useProjects } from '@/context/ProjectsContext';
+import { useProjectItems } from '@/context/ProjectItemsContext';
+
 
 const ProjectPage = ({ params }) => {
   const router = useRouter()
   const { metaplex } = useMetaplex();
   const wallet = useWallet();
   const { projects } = useProjects();
+  const { projectItems, clearProjectItems, addProjectItem } = useProjectItems();
 
-  const [projectItems, setProjectItems] = useState([]) // create a context for project items?
-
-  console.log(projects)
-  console.log(params.slug)
 
   const project = projects.find((p) => p.id ==params.slug);
 
   const getAllProjectSubNftsOfOwner = async () => {
-
+    clearProjectItems()
 
     const nfts = await metaplex.nfts().findAllByOwner({ owner: wallet.publicKey });
 
@@ -45,6 +44,7 @@ const ProjectPage = ({ params }) => {
           if (nftProjectId !== projectId.toString()) continue;
 
           console.log("NFT FOUND")
+          console.log(nfts[i])
 
           //if (TypeAttr.length > 0 && ProjectIDAttr === params.slug && (TypeAttr[0].value === "Model" || TypeAttr[0].value === "Document")) {
               const nftId = nfts[i].address.toString()
@@ -52,24 +52,25 @@ const ProjectPage = ({ params }) => {
               const nftNameAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Name")
               const nftDescAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Description")
               const nftTypeAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "Type")
-              const nftFileAttr = metadataJson.attributes.filter(attr => attr["trait_type"] === "File")
+
+              const nftFileUri = metadataJson.properties.files[1]
               
               const nftName = nftNameAttr[0].value
               const nftDesc = nftDescAttr[0].value
               const nftType = nftTypeAttr[0].value
-              const nftFile = nftFileAttr[0].value
+              //const nftFile = nftFileAttr[0].value
 
               console.log(nftName)
               console.log(nftDesc)
               console.log(nftType)
-              console.log(nftFile)
+              //console.log(nftFile)
 
               const item = {
                   id: nftId,
                   name: nftName,
                   description: nftDesc,
                   type: nftType,
-                  file: nftFile
+                  file: nftFileUri
               }
 
               console.log(item)
@@ -87,15 +88,7 @@ const ProjectPage = ({ params }) => {
   };
   
 
-  const addProjectItem = (newProjectItem) => {
-    setProjectItems((prevProjectItems) => {
-      const updatedProjectItems = [...prevProjectItems, newProjectItem];
-
-      console.log("Updated proj items")
-      console.log(updatedProjectItems)
-      return updatedProjectItems;
-    })
-  }
+  
 
   useEffect(() => {
     if (wallet.connected){
@@ -115,7 +108,7 @@ const ProjectPage = ({ params }) => {
   return (
     <main>
       <Navbar />
-      <h1>{params.slug}</h1>
+      
       <ProjectDetails project={project} projectItems={projectItems} onClick={handleMintSubNFT} />
     </main>
   );
